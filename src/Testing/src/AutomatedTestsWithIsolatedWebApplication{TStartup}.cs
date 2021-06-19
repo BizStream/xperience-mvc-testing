@@ -31,7 +31,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 
         /// <summary> An artifical delay added between tests. </summary>
         /// <seealso cref="AutomatedTestsWithIsolatedWebApplicationTearDown"/>
-        protected virtual TimeSpan ArtificalDelay => TimeSpan.FromSeconds( 1 );
+        protected virtual TimeSpan ArtificialDelay => TimeSpan.FromSeconds( 1 );
         #endregion
 
         /// <summary> Create an instance of an <see cref="XperienceWebApplicationFactory{TStartup}"/>. </summary>
@@ -79,7 +79,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             await Factory?.Host?.StopAsync();
 
             // NOTE: the runtime occasionally throw IO related exceptions, suspected to be due to async IO..? regardless, an artificial delay seems to remedy the issue™..
-            await Task.Delay( ArtificalDelay );
+            await Task.Delay( ArtificialDelay );
         }
 
         /// <summary> Not Supported, CMSApplication Initialization is handled by the Mvc Integration Framework. </summary>
