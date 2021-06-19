@@ -37,7 +37,8 @@ steps:
           throw "CMSTestLicenseKey is invalid.";
         }
 
-        Set-Content -Path src/Testing/test/appsettings.Development.json -Value '{{ "CMSTestLicenseKey": "{0}" }}' -f $licenseKey
+        $content = '{{ "CMSTestLicenseKey": "{0}" }}' -f $licenseKey
+        Set-Content -Path src/Testing/test/appsettings.Development.json -Value $content
 
   - task: DotNetCoreCLI@2
     displayName: build projects
