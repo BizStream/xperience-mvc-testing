@@ -5,7 +5,7 @@ using Kentico.Web.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BizStream.Kentico.Xperience.AspNetCore.StatusCodePages.Mvc.Testing.Tests
+namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
 {
 
     public class Startup
@@ -21,18 +21,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.StatusCodePages.Mvc.Testing.Tes
             services.AddCors();
             services.AddRouting();
 
-            services.AddKentico(
-                features =>
-                {
-                    features.UsePageBuilder();
-                    features.UsePageRouting(
-                        new PageRoutingOptions
-                        {
-                            EnableAlternativeUrls = true
-                        }
-                    );
-                }
-            ).SetAdminCookiesSameSiteNone()
+            services.AddKentico()
+                .SetAdminCookiesSameSiteNone()
                 .DisableVirtualContextSecurityForLocalhost();
         }
 

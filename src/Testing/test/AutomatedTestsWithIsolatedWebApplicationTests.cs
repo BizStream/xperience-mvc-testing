@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using BizStream.Kentico.Xperience.AspNetCore.StatusCodePages.Mvc.Testing.Tests;
 using NUnit.Framework;
 
 namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
