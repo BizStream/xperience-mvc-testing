@@ -15,6 +15,9 @@ trigger:
       - main
       - develop
 
+variables:
+  - group: Shared Secrets
+
 steps:
   - task: DotNetCoreCLI@2
     displayName: restore dependencies
@@ -29,7 +32,12 @@ steps:
     inputs:
       targetType: inline
       script: |
-        Set-Content -Path src/Testing/test/appsettings.Development.json -Value '{ "CMSTestLicenseKey": "$(CMSTestLicenseKey)" }'
+        $licenseKey = "$(CMSTestLicenseKey)"
+        if ([string]::IsNullOrWhiteSpace($licenseKey)) {
+          throw "CMSTestLicenseKey is invalid.";
+        }
+
+        Set-Content -Path src/Testing/test/appsettings.Development.json -Value '{ "CMSTestLicenseKey": ${licenseKey} }'
 
   - task: DotNetCoreCLI@2
     displayName: build projects
