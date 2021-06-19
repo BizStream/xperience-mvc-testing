@@ -11,6 +11,8 @@ For more information on Mvc Integration testing and automated testing in Kentico
 
 - Install the package into your Xperience Mvc Test project:
 
+> _Kentico versions `<13.0.19` are not supported when targeting `net5.0`, due to a [bug](https://devnet.kentico.com/download/hotfixes#bug-62788) within `Kentico.Xperience.Libraries.Tests`._
+
 ```bash
 dotnet add package BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 ```
