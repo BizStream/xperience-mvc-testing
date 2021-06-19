@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CMS.Base;
 using CMS.Core;
 using CMS.DataEngine;
-using CMS.Helpers;
 using CMS.IO;
 using CMS.LicenseProvider;
 using CMS.SiteProvider;
@@ -137,6 +136,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             {
                 throw new Exception( $"Failed to install test database:{Environment.NewLine}{log}" );
             }
+
+            SetConnectionString( connectionString.ConnectionString );
         }
 
         private void EnsureHashStringSalt( )
@@ -203,7 +204,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
         private void OnFinalize( object _, EventArgs e )
         {
             EnsureDatabaseDestroyed();
-            ConnectionHelper.ConnectionString = null;
+            SetConnectionString( null );
         }
 
         /// <summary> <see cref="ApplicationEvents.Initialized"/> handler. </summary>
@@ -222,9 +223,20 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             EnsureDatabaseInitialized();
 
             WebFarmContext.WebFarmEnabled = false;
-
-            ConnectionHelper.ConnectionString = connectionString.ConnectionString;
             Service.Resolve<IAppSettingsService>()[ "CMSLoadHashtables" ] = bool.TrueString;
+        }
+
+        private void SetConnectionString( string value, bool force = true )
+        {
+            ConnectionHelper.ConnectionString = value;
+            if( force )
+            {
+                // force the underlying configuration to be changed; ConnectionHelper.ConnectionString.set performs a null check preventing this
+                Service.Resolve<IConfiguration>()
+                    .GetSection( "ConnectionStrings" )
+                    .GetSection( ConnectionHelper.ConnectionStringName )
+                    .Value = value;
+            }
         }
 
         /// <inheritdoc />
