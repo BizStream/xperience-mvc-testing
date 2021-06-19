@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using CMS.Base;
 using CMS.Core;
 using CMS.DataEngine;
+using CMS.Helpers;
 using CMS.IO;
 using CMS.LicenseProvider;
 using CMS.SiteProvider;
+using CMS.WebFarmSync;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -218,6 +220,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
         {
             EnsureHashStringSalt();
             EnsureDatabaseInitialized();
+
+            WebFarmContext.WebFarmEnabled = false;
 
             ConnectionHelper.ConnectionString = connectionString.ConnectionString;
             Service.Resolve<IAppSettingsService>()[ "CMSLoadHashtables" ] = bool.TrueString;

@@ -29,9 +29,9 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 
         #region Properties
 
-        /// <summary> An artifical delay added between tests. </summary>
+        /// <summary> An artificial delay added between tests. </summary>
         /// <seealso cref="AutomatedTestsWithIsolatedWebApplicationTearDown"/>
-        protected virtual TimeSpan ArtificialDelay => TimeSpan.FromSeconds( 1 );
+        protected virtual TimeSpan ArtificialDelay => TimeSpan.FromSeconds( 1.5 );
         #endregion
 
         /// <summary> Create an instance of an <see cref="XperienceWebApplicationFactory{TStartup}"/>. </summary>
