@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 {
 
+    /// <summary> Mvc Middleware providing support for Isolated Mvc Tests. </summary>
     public class IntegrationTestMiddleware
     {
         #region Fields
@@ -16,6 +17,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
         public IntegrationTestMiddleware( RequestDelegate next )
             => this.next = next;
 
+        /// <summary> Returns a <see cref="CMSActionContext"/> that disables functionality not needed for Isolated Mvc Tests. </summary>
+        /// <remarks> Adapted from CMS.Tests.AutomatedTest.DisableUnnecessaryFunctionality. </remarks>
         private CMSActionContext TestActionContext( )
             => new CMSActionContext()
             {
@@ -36,6 +39,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
                 CreateSearchTask = false
             };
 
+        /// <summary> Disables WebFarm functionality. </summary>
         private void DisableWebFarmsFeatures( )
         {
             WebFarmContext.WebFarmEnabled = false;
