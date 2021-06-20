@@ -1,50 +1,18 @@
-﻿using Kentico.Content.Web.Mvc;
-using Kentico.Web.Mvc;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
 {
 
-    public class Startup
+    public sealed class Startup : XperienceTestStartup
     {
 
-        public void ConfigureServices( IServiceCollection services )
+        public override void ConfigureTests( IApplicationBuilder app )
         {
-            services.AddMvc();
-
-            services.AddAuthentication();
-            services.AddAuthorization();
-
-            services.AddCors();
-            services.AddRouting();
-
-            services.AddKentico()
-                .SetAdminCookiesSameSiteNone()
-                .DisableVirtualContextSecurityForLocalhost();
         }
 
-        public void Configure( IApplicationBuilder app )
+        public override void ConfigureTestServices( IServiceCollection services )
         {
-            app.UseXperienceTesting();
-
-            app.UseCookiePolicy();
-            app.UseCors();
-            app.UseStaticFiles();
-
-            app.UseKentico();
-
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseAuthentication();
-
-            app.UseEndpoints(
-               endpoints =>
-               {
-                   endpoints.Kentico().MapRoutes();
-                   endpoints.MapControllerRoute( name: "default", pattern: "{controller=Home}/{action=Index}/{id?}" );
-               }
-           );
         }
 
     }
