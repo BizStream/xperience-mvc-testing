@@ -1,6 +1,4 @@
 ﻿using Kentico.Content.Web.Mvc;
-using Kentico.Content.Web.Mvc.Routing;
-using Kentico.PageBuilder.Web.Mvc;
 using Kentico.Web.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +11,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
 
         public void ConfigureServices( IServiceCollection services )
         {
-            services.AddControllersWithViews();
+            services.AddMvc();
 
             services.AddAuthentication();
             services.AddAuthorization();
@@ -28,6 +26,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
 
         public void Configure( IApplicationBuilder app )
         {
+            app.UseXperienceTesting();
+
             app.UseCookiePolicy();
             app.UseCors();
             app.UseStaticFiles();
@@ -37,6 +37,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing.Tests
             app.UseRouting();
             app.UseAuthorization();
             app.UseAuthentication();
+
             app.UseEndpoints(
                endpoints =>
                {
