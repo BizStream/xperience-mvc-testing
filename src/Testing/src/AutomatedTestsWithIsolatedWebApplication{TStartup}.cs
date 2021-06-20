@@ -31,7 +31,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 
         /// <summary> An artificial delay added between tests. </summary>
         /// <seealso cref="AutomatedTestsWithIsolatedWebApplicationTearDown"/>
-        protected virtual TimeSpan ArtificialDelay => TimeSpan.FromSeconds( 1.5 );
+        protected virtual TimeSpan ArtificialDelay => TimeSpan.FromSeconds( .25 );
         #endregion
 
         /// <summary> Create an instance of an <see cref="XperienceWebApplicationFactory{TStartup}"/>. </summary>
