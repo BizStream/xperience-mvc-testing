@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CMS.Base;
 using CMS.Core;
 using CMS.DataEngine;
+using CMS.Helpers;
 using CMS.IO;
 using CMS.LicenseProvider;
 using CMS.SiteProvider;
@@ -56,6 +59,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             host = builder.Build();
 
             ApplicationEvents.Finalize.Execute += OnFinalize;
+            ApplicationEvents.PostStart.Execute += OnPostStart;
 
             // NOTE: PreInit does not fire until the host is started (when `ApplicationInitializerStartupFilter` set's Kentico's ServiceProvider to Mvc's)
             ApplicationEvents.PreInitialized.Execute += OnPreInit;
@@ -73,6 +77,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             {
                 ApplicationEvents.Finalize.Execute -= OnFinalize;
                 ApplicationEvents.Initialized.Execute -= OnInit;
+                ApplicationEvents.PostStart.Execute -= OnPostStart;
                 ApplicationEvents.PreInitialized.Execute -= OnPreInit;
 
                 host?.Dispose();
@@ -86,6 +91,16 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
         {
             Dispose( true );
             GC.SuppressFinalize( this );
+        }
+
+        private void EnsureAnonymousTaskProcessorDisabled()
+        {
+            var watcher = Assembly.GetAssembly( typeof( WebFarmContext ) )
+                .GetType( "CMS.WebFarmSync.AnonymousTasksProcessor" )
+                .GetProperty( "NotifyWatcher", BindingFlags.NonPublic | BindingFlags.Static )
+                .GetValue( null ) as FileSystemWatcher;
+
+            watcher.EnableRaisingEvents = false;
         }
 
         private void EnsureDatabaseDestroyed( )
@@ -215,6 +230,11 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             EnsureSite();
         }
 
+        protected virtual void OnPostStart( object _, EventArgs e )
+        {
+            EnsureAnonymousTaskProcessorDisabled();
+        }
+
         /// <summary> <see cref="ApplicationEvents.PreInitialized"/> handler. </summary>
         /// <remarks> Ensures the CMS database has been initialized, and the HashStringSalt and CMSConnectionString are set. </remarks>
         protected virtual void OnPreInit( object _, EventArgs e )
@@ -222,8 +242,8 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             EnsureHashStringSalt();
             EnsureDatabaseInitialized();
 
-            WebFarmContext.WebFarmEnabled = false;
             Service.Resolve<IAppSettingsService>()[ "CMSLoadHashtables" ] = bool.TrueString;
+            Service.Resolve<IAppSettingsService>()[ "CMSWebFarmMode" ] = WebFarmModeEnum.Disabled.ToStringRepresentation();
         }
 
         private void SetConnectionString( string value, bool force = true )
