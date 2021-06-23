@@ -47,7 +47,7 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
             services.AddCors();
             services.AddRouting();
 
-            services.AddKentico()
+            services.AddKentico( ConfigureXperience )
                 .SetAdminCookiesSameSiteNone()
                 .DisableVirtualContextSecurityForLocalhost();
 
@@ -59,6 +59,10 @@ namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
 
         /// <summary> Configure services needed to run Isolated Mvc Tests. </summary>
         public abstract void ConfigureTestServices( IServiceCollection services );
+
+        public virtual void ConfigureXperience( IFeaturesBuilder features )
+        {
+        }
 
     }
 
