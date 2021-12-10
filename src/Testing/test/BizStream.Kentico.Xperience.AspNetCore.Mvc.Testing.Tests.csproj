@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="CMS.AssemblyDiscoverable" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Net.Http.Json" Version="6.*" />
     </ItemGroup>
 
     <ItemGroup>

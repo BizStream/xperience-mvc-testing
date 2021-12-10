@@ -19,6 +19,23 @@ variables:
   - group: Shared Secrets
 
 steps:
+  - task: UseDotNet@2
+    displayName: use netcoreapp3.1 sdk
+    inputs:
+      version: '3.1.x'
+      performMultiLevelLookup: true
+
+  - task: UseDotNet@2
+    displayName: use net5.0 sdk
+    inputs:
+      version: '5.0.x'
+      performMultiLevelLookup: true
+
+  - task: UseDotNet@2
+    displayName: use net6.0 sdk
+    inputs:
+      version: '6.0.x'
+
   - task: DotNetCoreCLI@2
     displayName: restore dependencies
     inputs:
@@ -46,25 +63,6 @@ steps:
       projects: src/**/*.csproj
       arguments: --no-restore
 
-  # - task: PowerShell@2
-  #   displayName: ensure test db file permissions
-  #   inputs:
-  #     targetType: inline
-  #     script: |
-  #       $path = "${env:BUILD_SOURCESDIRECTORY}\TestDatabases"
-  #       if( -Not ( Test-Path -Path $path ) ) {
-  #         $d = [System.IO.Directory]::CreateDirectory( $path )
-  #       }
-
-  #       $ar = New-Object System.Security.AccessControl.FileSystemAccessRule( "Everyone", "FullControl", "ContainerInherit, ObjectInherit", "None", "Allow" )
-
-  #       $acl = Get-Acl $path
-  #       $acl.AddAccessRule($ar)
-
-  #       Set-Acl $path -AclObject $acl
-  #     failOnStderr: true
-  #     showWarnings: true
-
   - task: DotNetCoreCLI@2
     displayName: test netcoreapp3.1
     inputs:
@@ -80,6 +78,14 @@ steps:
       projects: src/**/test/**/BizStream.*.Tests.csproj
       arguments: -f net5.0 --collect:"XPlat Code coverage" --no-build
       testRunTitle: net5.0
+  
+  #- task: DotNetCoreCLI@2
+  #  displayName: test net6.0
+  #  inputs:
+  #    command: test
+  #    projects: src/**/test/**/BizStream.*.Tests.csproj
+  #    arguments: -f net6.0 --collect:"XPlat Code coverage" --no-build
+  #    testRunTitle: net6.0
 
   - task: reportgenerator@4
     displayName: generate code coverage

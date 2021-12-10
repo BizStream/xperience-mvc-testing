@@ -1,66 +1,66 @@
-﻿using System.Threading.Tasks;
-using CMS.Base;
+﻿using CMS.Base;
 using CMS.Search;
 using CMS.WebFarmSync;
 using Microsoft.AspNetCore.Http;
 
-namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing
+namespace BizStream.Kentico.Xperience.AspNetCore.Mvc.Testing;
+
+/// <summary> Mvc Middleware providing support for Isolated Mvc Tests. </summary>
+public class IntegrationTestMiddleware
 {
+    #region Fields
+    private readonly RequestDelegate next;
+    #endregion
 
-    /// <summary> Mvc Middleware providing support for Isolated Mvc Tests. </summary>
-    public class IntegrationTestMiddleware
+    public IntegrationTestMiddleware( RequestDelegate next )
     {
-        #region Fields
-        private readonly RequestDelegate next;
-        #endregion
+        this.next = next;
+    }
 
-        public IntegrationTestMiddleware( RequestDelegate next )
-            => this.next = next;
-
-        /// <summary> Returns a <see cref="CMSActionContext"/> that disables functionality not needed for Isolated Mvc Tests. </summary>
-        /// <remarks> Adapted from CMS.Tests.AutomatedTest.DisableUnnecessaryFunctionality. </remarks>
-        private CMSActionContext TestActionContext( )
-            => new CMSActionContext()
-            {
-                LogSynchronization = false,
-                LogExport = false,
-                LogIntegration = false,
-                EnableLogContext = false,
-                LogWebFarmTasks = false,
-                CreateVersion = false,
-                AllowAsyncActions = false,
-                SendEmails = false,
-                SendNotifications = false,
-                TouchParent = false,
-                UseGlobalAdminContext = false,
-                UpdateUserCounts = false,
-                UseCacheForSynchronizationXMLs = false,
-                EnableSmartSearchIndexer = false,
-                CreateSearchTask = false
-            };
-
-        /// <summary> Disables WebFarm functionality. </summary>
-        private void DisableWebFarmsFeatures( )
+    /// <summary> Returns a <see cref="CMSActionContext"/> that disables functionality not needed for Isolated Mvc Tests. </summary>
+    /// <remarks> Adapted from CMS.Tests.AutomatedTest.DisableUnnecessaryFunctionality. </remarks>
+    private static CMSActionContext TestActionContext( )
+    {
+        return new()
         {
-            WebFarmContext.WebFarmEnabled = false;
-            WebFarmContext.UseTasksForExternalApplication = false;
-        }
+            LogSynchronization = false,
+            LogExport = false,
+            LogIntegration = false,
+            EnableLogContext = false,
+            LogWebFarmTasks = false,
+            CreateVersion = false,
+            AllowAsyncActions = false,
+            SendEmails = false,
+            SendNotifications = false,
+            TouchParent = false,
+            UseGlobalAdminContext = false,
+            UpdateUserCounts = false,
+            UseCacheForSynchronizationXMLs = false,
+            EnableSmartSearchIndexer = false,
+            CreateSearchTask = false
+        };
+    }
 
-        private void DisabledSearchFeatures( )
+    /// <summary> Disables WebFarm functionality. </summary>
+    private static void DisableWebFarmsFeatures( )
+    {
+        WebFarmContext.WebFarmEnabled = false;
+        WebFarmContext.UseTasksForExternalApplication = false;
+    }
+
+    private static void DisabledSearchFeatures( )
+    {
+        SearchIndexInfoProvider.SearchEnabled = false;
+    }
+
+    public async Task InvokeAsync( HttpContext context )
+    {
+        DisabledSearchFeatures();
+        DisableWebFarmsFeatures();
+
+        using( TestActionContext() )
         {
-            SearchIndexInfoProvider.SearchEnabled = false;
+            await next( context );
         }
-
-        public async Task InvokeAsync( HttpContext context )
-        {
-            DisabledSearchFeatures();
-            DisableWebFarmsFeatures();
-
-            using( TestActionContext() )
-            {
-                await next( context );
-            }
-        }
-
     }
 }
